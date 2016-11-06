@@ -2,21 +2,20 @@
 /**
  *
  */
-class Controller{
-  private $model;
-  function __construct($model){
-    $this->model = $model;
-  }
+class Controller extends PController{
 
-  private function render($tpl, $params, $req = null){
-    ob_start();
-    include 'tpl/'.$tpl;
-    $tpl = ob_get_contents();
-    ob_end_clean();
-    return $tpl;
-  }
 
   function index($req){
-    return $this->render('root.php', $req);
+    $params['test'] = $this->model->getTest($req);
+    return $this->render(__DIR__.'/tpl/root.php', $params);
+  }
+  function auth($req){
+    return $this->render(__DIR__.'/tpl/auth.php', $req);
+  }
+  function save_user($req){
+    $this->model->save_user($req);
+    $_SESSION['uname']=$req['name'];
+    $_SESSION['uemail']=$req['email'];
+    header("Location: ".$req['uri']);
   }
 }

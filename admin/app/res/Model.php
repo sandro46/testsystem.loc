@@ -1,7 +1,16 @@
 <?php
 class Model extends PModel{
-  public function get($req){
-    return $this->db->query("SELECT * FROM test");
+  public function get_result($req){
+    $sql = "SELECT u.email,
+            	CONCAT('[', GROUP_CONCAT(concat('{\"', t.name, '\":',r.res, '}')),']') ar
+            FROM `result` r
+            join user u ON u.email=r.uemail
+            join test t ON t.id=r.tid
+            GROUP BY u.email";
+            // echo "<pre>".$sql."</pre>";
+    $st = $this->db->prepare($sql);
+    $st->execute(array($req['id']));
+    return $st;
   }
   public function add($req){
     $st = $this->db->prepare("INSERT INTO test(name, description)VALUES(?,?)");
@@ -12,7 +21,6 @@ class Model extends PModel{
                               	concat('[',GROUP_CONCAT(concat('{\"id\":','\"',r.id,'\"', ',','\"right_res\":\"',r.right_res, '\",', '\"text\":', '\"',r.text,'\"}') SEPARATOR ','),']') res
                               FROM quest q
                               left join response r ON r.quest_id=q.id
-                              WHERE q.test_id=?
                               GROUP BY q.test_id, q.question, q.id");
     $st->execute(array($req['id']));
     return $st;
@@ -34,31 +42,6 @@ class Model extends PModel{
         $st->execute(array($key, $v['text'], ($v['right_res'] ? 'Y' : 'N')));
       }
     }
-  }
-  function save_res($req){
-    // array(3) { ["test/save_res"]=> string(0) "" ["test_id"]=> string(1) "1" ["res"]=> array(3) { [1]=> string(2) "52" [2]=> string(2) "55" [3]=> string(2) "59" } }
-
-    $ress = array();
-    $quest = array();
-    foreach ($req["res"] as $key => $val) {
-      $ress[]=$key;
-      $quest[]=$val;
-      $placeholders[] = '?';
-    }
-    $sql = "SELECT q.question, r.text
-            FROM quest q
-            JOIN response r ON r.quest_id=q.id and r.id in(".implode(',',$placeholders).")
-            WHERE q.id in(".implode(',',$placeholders).")";
-    // var_dump($sql);
-    $st = $this->db->prepare($sql);
-    $st->execute(array_merge($quest,$ress));
-    $save = array();
-    while($row = $st->fetch()){
-      $save[$row['question']] = $row['text'];
-    }
-    $st = $this->db->prepare("INSERT INTO result(uemail, tid, res) VALUES (?,?,?)");
-    $st->execute(array($req['uemail'], $req["test_id"], json_encode($save, JSON_UNESCAPED_UNICODE)));
-    // $this->model->save_res($req);
   }
 }
 

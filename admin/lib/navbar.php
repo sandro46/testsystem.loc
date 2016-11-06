@@ -14,7 +14,7 @@
   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
       <li <?=(CONTROLLER=='test'? 'class="active"' :'')?> ><a href="/admin/test">Тесты</a></li>
-      <li <?=(CONTROLLER=='response'? 'class="active"' :'')?> ><a href="#">Ответы</a></li>
+      <li <?=(CONTROLLER=='res'? 'class="active"' :'')?> ><a href="/admin/res">Ответы</a></li>
       <li><a href="/" target="_blank">Перейти на сайт</a></li>
       <!-- <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>

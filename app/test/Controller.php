@@ -9,18 +9,13 @@ class Controller extends PController{
     // if($req['id'])
     return $this->render(__DIR__.'/tpl/root.php', $params, $req);
   }
-  function add($req){
-    $this->model->add($req);
-    header("Location: ".$_SERVER['HTTP_REFERER']);
-  }
-  function add_quest($req){
+  function save_res($req){
     // var_dump($req);
-    $this->model->add_quest($req);
-    header("Location: ".$_SERVER['HTTP_REFERER']);
+    $this->model->save_res($req);
+    header("Location: /test/finish?test=".$req['test_id']."&uemail=".$req["uemail"]);
   }
-  function save_quest($req){
-    // var_dump($req);
-    $this->model->save_quest($req);
-    header("Location: ".$_SERVER['HTTP_REFERER']);
+  function finish($req){
+    return $this->render(__DIR__.'/tpl/finish.php', null, $req);
+    // header("Location: /test/finish?test=".$req['test_id']."&uemail=".$req["uemail"]);
   }
 }
